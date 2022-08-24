@@ -48,6 +48,14 @@ public class ActivationLayer extends Layer {
         return 1 - (float)Math.pow(Math.tanh(value), 2);
     }
 
+    public static float relu(float value) {
+        return Math.max(0, value);
+    }
+
+    public static float reluPrime(float value) {
+        return value > 0 ? 1 : 0;
+    }
+
     public String toString() {
         return "ActivationLayer";
     }
