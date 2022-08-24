@@ -22,6 +22,8 @@ public class Model {
 
     public void fit(float[][] x, float[][] y, float learningRate, int epochs, int batchsize) {
         for (int epoch = 0; epoch < epochs; epoch++) {
+            shuffle(x, y);
+
             System.out.println("Starting Epoch: " + (epoch + 1));
             float err = 0;
             float[] loss = new float[y[0].length];
@@ -47,6 +49,18 @@ public class Model {
 
             err /= x.length;
             System.out.println("Error: " + err);;
+        }
+    }
+
+    public void shuffle(float[][] x, float[][] y) {
+        for (int i = 0; i < x.length; i++) {
+            int j = (int)(Math.random() * x.length);
+            float[] temp = x[i];
+            x[i] = x[j];
+            x[j] = temp;
+            temp = y[i];
+            y[i] = y[j];
+            y[j] = temp;
         }
     }
 
