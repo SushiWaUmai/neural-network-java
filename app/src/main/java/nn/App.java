@@ -64,6 +64,7 @@ public class App {
         try {
             mnistTrain = new MnistDataReader().readData("./src/main/resources/train-images.idx3-ubyte", "./src/main/resources/train-labels.idx1-ubyte");
             mnistTest = new MnistDataReader().readData("./src/main/resources/t10k-images.idx3-ubyte", "./src/main/resources/t10k-labels.idx1-ubyte");
+            System.out.println("Successfully read MNIST data");
         }
         catch (IOException e) {
             System.out.println("Failed to load file: " + e.getMessage());
@@ -76,17 +77,26 @@ public class App {
         float[][] trainY = new float[mnistTrain.length][10];
         toFloatArray(mnistTrain, trainX, trainY);
 
-        Model model = new Model(
-            new Layer[] {
-                new FCLayer(28 * 28, 16),
-                new ActivationLayer(new Tanh()),
-                new FCLayer(16, 16),
-                new ActivationLayer(new Tanh()),
-                new FCLayer(16, 10),
-                new ActivationLayer(new Sigmoid()),
-            }
-        );
-    
+        Model model;
+        try {
+            model = Model.load("./src/main/resources/mnistmodel.bin");
+        }
+        catch (IOException e) {
+            System.out.println("Failed to load model: " + e.getMessage());
+            System.out.println("Creating new model...");
+            
+            model = new Model(
+                new Layer[] {
+                    new FCLayer(28 * 28, 16),
+                    new ActivationLayer(new Tanh()),
+                    new FCLayer(16, 16),
+                    new ActivationLayer(new Tanh()),
+                    new FCLayer(16, 10),
+                    new ActivationLayer(new Sigmoid()),
+                }
+            );
+        }
+
         model.fit(trainX, trainY, learningRate, epochs, 32);
         
         float[][] testX = new float[mnistTest.length][28 * 28];
@@ -104,6 +114,14 @@ public class App {
 
         float accuracy = (float)correct / mnistTest.length;
         System.out.println("The accuracy of this model is: " + (accuracy * 100) + "%.");
+
+        try {
+            Model.save("./src/main/resources/mnistmodel.bin", model);
+            System.out.println("Successfully saved model.");
+        }
+        catch (IOException e) {
+            System.out.println("Failed to save model: " + e.getMessage());
+        }
     }
 
     public static int argmax(float[] arr) {

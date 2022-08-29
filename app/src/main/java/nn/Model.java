@@ -1,4 +1,5 @@
 package nn;
+import java.io.*;
 
 public class Model {
     public Layer[] layers;
@@ -17,6 +18,31 @@ public class Model {
     public void backward(float[] loss, float learningRate) {
         for (int i = layers.length - 1; i >= 0; i--) {
             loss = layers[i].backward(loss, learningRate);
+        }
+    }
+
+    public static void save(String path, Model model) throws IOException {
+        try {
+            FileOutputStream fos = new FileOutputStream(path);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(model.layers);
+            oos.close();
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    public static Model load(String path) throws IOException {
+        try {
+            FileInputStream fis = new FileInputStream(path);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Layer[] layers = (Layer[]) ois.readObject();
+            ois.close();
+            return new Model(layers);
+        } catch (IOException e) {
+            throw e;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
