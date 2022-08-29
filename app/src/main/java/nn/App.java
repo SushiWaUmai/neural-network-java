@@ -9,8 +9,8 @@ import mnist.*;
 
 public class App {
     public static void main(String[] args) {
-        xor();
-        // trainMnist();
+        // xor();
+        trainMnist();
     }
 
     public static void xor() {
@@ -25,17 +25,26 @@ public class App {
         };
         float[][] trainY = new float[][] 
         {
-            new float[] { 1 },
-            new float[] { 1 },
-            new float[] { 0 },
-            new float[] { 0 },
+            new float[] { 1, 0 },
+            new float[] { 1, 0 },
+            new float[] { 0, 1 },
+            new float[] { 0, 1 },
         };
-        
+
+        float[][] testX = new float[][]
+        {
+            new float[] { 1, 0 },
+            new float[] { 0, 1 },
+            new float[] { 0, 0 },
+            new float[] { 1, 1 },
+        };
+      
+
         Model model = new Model(
             new Layer[] {
                 new FCLayer(2, 3),
-                new ActivationLayer(new Tanh()),
-                new FCLayer(3, 1),
+                new ActivationLayer(new Sigmoid()),
+                new FCLayer(3, 2),
                 new ActivationLayer(new Tanh()),
             }
         );
@@ -43,9 +52,9 @@ public class App {
         model.fit(trainX, trainY, learningRate, epochs, 1);
         
         for (int i = 0; i < 4; i++) {
-            float[] y = model.forward(trainX[i]);
-            System.out.println("Value: " + arrayToString(trainX[i]));
-            System.out.println("Pred: " + y[0]);
+            float[] y = model.forward(testX[i]);
+            System.out.println("Value: " + arrayToString(testX[i]));
+            System.out.println("Pred: " + arrayToString(y));
         }
     }
 
@@ -62,7 +71,7 @@ public class App {
         }
 
         int epochs = 35;
-        float learningRate = 0.05f;
+        float learningRate = 0.01f;
         float[][] trainX = new float[mnistTrain.length][28 * 28];
         float[][] trainY = new float[mnistTrain.length][10];
         toFloatArray(mnistTrain, trainX, trainY);
@@ -74,7 +83,7 @@ public class App {
                 new FCLayer(16, 16),
                 new ActivationLayer(new Tanh()),
                 new FCLayer(16, 10),
-                new ActivationLayer(new Tanh()),
+                new ActivationLayer(new Sigmoid()),
             }
         );
     
@@ -86,7 +95,7 @@ public class App {
 
         int correct = 0;
         for (int i = 0; i < mnistTest.length; i++) {
-            float[] y = model.forward(trainX[i]);
+            float[] y = model.forward(testX[i]);
             int pred = argmax(y);
             if (pred == mnistTest[i].getLabel()) {
                 correct++;
