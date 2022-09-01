@@ -10,7 +10,8 @@ import me.neuralnetwork.mnist.*;
 public class App {
     public static void main(String[] args) {
         // xor();
-        trainMnist();
+        // trainMnist();
+        testMnist();
     }
 
     public static void xor() {
@@ -121,6 +122,38 @@ public class App {
         }
         catch (IOException e) {
             System.out.println("Failed to save model: " + e.getMessage());
+        }
+    }
+    
+    public static void testMnist() {
+        MnistMatrix[] mnistTest;
+        try {
+            mnistTest = new MnistDataReader().readData("./src/main/resources/t10k-images.idx3-ubyte", "./src/main/resources/t10k-labels.idx1-ubyte");
+            System.out.println("Successfully read MNIST data");
+        }
+        catch (IOException e) {
+            System.out.println("Failed to load file: " + e.getMessage());
+            return;
+        }
+
+        Model model;
+        try {
+            model = Model.load("./src/main/resources/mnistmodel.bin");
+        }
+        catch (IOException e) {
+            System.out.println("Failed to load model: " + e.getMessage());
+            return;
+        }
+        float[][] testX = new float[mnistTest.length][28 * 28];
+        float[][] testY = new float[mnistTest.length][10];
+        toFloatArray(mnistTest, testX, testY);
+
+        for (int i = 0; i < 10; i++) {
+            int index = (int)(Math.random() * mnistTest.length);
+            float[] y = model.forward(testX[index]);
+            int pred = argmax(y);
+            System.out.println("Value: " + MnistMatrix.toASCII(testX[index]));
+            System.out.println("Pred: " + pred);
         }
     }
 
