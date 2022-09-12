@@ -10,7 +10,7 @@ import me.neuralnetwork.mnist.*;
 public class App {
     public static void main(String[] args) {
         // xor();
-        // trainMnist();
+        trainMnist();
         testMnist();
     }
 
@@ -89,7 +89,7 @@ public class App {
             model = new Model(
                 new Layer[] {
                     new FCLayer(28 * 28, 5),
-                    new ActivationLayer(new Tanh()),
+                    new ActivationLayer(new ReLU()),
                     new FCLayer(5, 10),
                     new ActivationLayer(new Softmax()),
                 }
