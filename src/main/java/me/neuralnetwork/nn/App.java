@@ -88,12 +88,10 @@ public class App {
             
             model = new Model(
                 new Layer[] {
-                    new FCLayer(28 * 28, 16),
+                    new FCLayer(28 * 28, 5),
                     new ActivationLayer(new Tanh()),
-                    new FCLayer(16, 16),
-                    new ActivationLayer(new Tanh()),
-                    new FCLayer(16, 10),
-                    new ActivationLayer(new Sigmoid()),
+                    new FCLayer(5, 10),
+                    new ActivationLayer(new Softmax()),
                 }
             );
         }
